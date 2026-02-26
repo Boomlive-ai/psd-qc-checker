@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
-  // ag-psd uses Node.js Buffer; ensure server-side only parsing
+  output: "standalone",
   experimental: {
     serverComponentsExternalPackages: ["ag-psd"],
   },

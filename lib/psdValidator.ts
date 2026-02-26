@@ -114,6 +114,8 @@ export async function validatePsd(
   // --- Parse PSD with timeout ---
   let width: number;
   let height: number;
+  let dpiH: number | undefined;
+  let dpiV: number | undefined;
   let totalLayers: number;
   let artLayers: number;
 
@@ -122,6 +124,13 @@ export async function validatePsd(
 
     width = psd.width;
     height = psd.height;
+
+    // Extract DPI from imageResources.resolutionInfo
+    const resInfo = psd.imageResources?.resolutionInfo;
+    if (resInfo) {
+      dpiH = Math.round(resInfo.horizontalResolution);
+      dpiV = Math.round(resInfo.verticalResolution);
+    }
 
     const counts = countLayers(psd.children);
     totalLayers = counts.totalLayers;
@@ -160,6 +169,8 @@ export async function validatePsd(
     width,
     height,
     mp: parseFloat(mp.toFixed(2)),
+    dpiH,
+    dpiV,
     totalLayers,
     artLayers,
     preferred16MP,

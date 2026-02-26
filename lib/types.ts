@@ -6,6 +6,8 @@ export interface ValidationResult {
   width?: number;
   height?: number;
   mp?: number;
+  dpiH?: number;
+  dpiV?: number;
   totalLayers?: number;
   artLayers?: number;
   preferred16MP?: boolean;

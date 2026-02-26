@@ -47,6 +47,7 @@ export function ResultsTable({ results, onClear }: Props) {
                 "Source",
                 "PSD?",
                 "W x H",
+                "DPI",
                 "MP",
                 "Layers (art/total)",
                 "Preferred",
@@ -65,7 +66,10 @@ export function ResultsTable({ results, onClear }: Props) {
           <tbody className="bg-white divide-y divide-gray-100">
             {results.map((r, i) => (
               <tr key={i} className={r.pass ? "" : "bg-red-50/40"}>
-                <td className="px-3 py-2 font-medium max-w-[200px] truncate" title={r.fileName}>
+                <td
+                  className="px-3 py-2 font-medium max-w-[200px] truncate"
+                  title={r.fileName}
+                >
                   {r.fileName}
                 </td>
                 <td className="px-3 py-2 capitalize">{r.source}</td>
@@ -80,6 +84,9 @@ export function ResultsTable({ results, onClear }: Props) {
                   {r.width != null && r.height != null
                     ? `${r.width} x ${r.height}`
                     : "-"}
+                </td>
+                <td className="px-3 py-2 whitespace-nowrap">
+                  {formatDpi(r.dpiH, r.dpiV)}
                 </td>
                 <td className="px-3 py-2">{r.mp != null ? r.mp : "-"}</td>
                 <td className="px-3 py-2 whitespace-nowrap">
@@ -121,6 +128,19 @@ export function ResultsTable({ results, onClear }: Props) {
 }
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Format DPI for display. If H and V are the same, show once; otherwise show both. */
+function formatDpi(h?: number, v?: number): string {
+  if (h == null && v == null) return "-";
+  if (h != null && v != null) {
+    return h === v ? `${h}` : `${h} x ${v}`;
+  }
+  return `${h ?? v}`;
+}
+
+// ---------------------------------------------------------------------------
 // CSV generation & download
 // ---------------------------------------------------------------------------
 
@@ -131,6 +151,8 @@ function downloadCsv(results: ValidationResult[]) {
     "PSD",
     "Width",
     "Height",
+    "DPI (H)",
+    "DPI (V)",
     "MP",
     "Art Layers",
     "Total Layers",
@@ -145,6 +167,8 @@ function downloadCsv(results: ValidationResult[]) {
     r.isPsd ? "Yes" : "No",
     r.width?.toString() ?? "",
     r.height?.toString() ?? "",
+    r.dpiH?.toString() ?? "",
+    r.dpiV?.toString() ?? "",
     r.mp?.toString() ?? "",
     r.artLayers?.toString() ?? "",
     r.totalLayers?.toString() ?? "",

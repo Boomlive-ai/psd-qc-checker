@@ -28,9 +28,12 @@ export async function POST(req: NextRequest) {
     const fileEntries: { name: string; buffer: ArrayBuffer }[] = [];
 
     for (const entry of files) {
-      if (!(entry instanceof File)) continue;
-      const buffer = await entry.arrayBuffer();
-      fileEntries.push({ name: entry.name, buffer });
+      // Use Blob check instead of `instanceof File` — File may not exist in all Node versions
+      if (typeof entry === "string") continue;
+      const blob = entry as Blob & { name?: string };
+      const buffer = await blob.arrayBuffer();
+      const name = blob.name || "unknown.psd";
+      fileEntries.push({ name, buffer });
     }
 
     // Process in parallel chunks of CONCURRENCY
